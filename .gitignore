@@ -63,3 +63,15 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+# android-testing
+.idea
+*.iml
+local.properties
+build
+.gradle
+# Eclipse project files
+.project
+.settings/
+.classpath
+bazel-*
