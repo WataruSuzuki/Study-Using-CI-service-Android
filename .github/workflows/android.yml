@@ -1,10 +1,40 @@
-name: Android Device CI
+name: Android Emulator CI
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  android-emulator-runner-simply:
+    runs-on: macOS-latest
 
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Android Emulator Runner simply
+      uses: ReactiveCircus/android-emulator-runner@v2.4.0
+      with:
+        api-level: 29
+        script: ./test_espresso_basic.sh
+
+  android-emulator-runner-with-strategy:
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        api-level: [23, 29]
+        target: [default]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Android Emulator Runner with strategy matrix
+      uses: ReactiveCircus/android-emulator-runner@v2.4.0
+      with:
+        api-level: ${{ matrix.api-level }}
+        target: ${{ matrix.target }}
+        arch: x86_64
+        profile: Nexus 6
+        script: ./test_espresso_basic.sh
+
+  hello-world:
     runs-on: macOS-latest
 
     steps:
