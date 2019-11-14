@@ -1,0 +1,40 @@
+name: Android Emulator CI on Ubuntu
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: Install sdkmanager
+      run: |
+        curl -L -O https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip
+        sudo unzip commandlinetools-linux-6200805_latest.zip -d $ANDROID_HOME
+        export PATH=$PATH:{$ANDROID_HOME}tools/bin
+        sudo $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-27;google_apis;x86" --sdk_root=${ANDROID_HOME}
+        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --sdk_root=${ANDROID_HOME}
+
+    - name: Install android emulator
+      run: |
+        echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n api_level_27_google_apis -k 'system-images;android-27;google_apis;x86' -f
+
+    - name: Start android emulator
+      run: |
+        echo "Starting emulator"
+        echo $ANDROID_HOME/emulator/emulator -list-avds
+        echo "y" | nohup $ANDROID_HOME/emulator/emulator -avd api_level_27_google_apis -no-snapshot > /dev/null 2>&1 &
+        echo "y" | $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+        echo "Emulator started"
+        $ANDROID_HOME/platform-tools/adb devices
+    #
+    # - name: Run All Test
+    #   run: |
+    #     ./test_all.sh

@@ -14,7 +14,7 @@ jobs:
       with:
         java-version: 1.8
 
-    - name: Run JUNIT TEST
+    - name: Run JUnit TEST
       run: |
         cd unit/BasicUnitAndroidTest/
         ./gradlew test
