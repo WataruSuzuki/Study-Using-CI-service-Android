@@ -3,9 +3,15 @@ name: Android Emulator CI
 on: [push, pull_request]
 
 jobs:
+  validation:
+    runs-on: macOS-latest
+    steps:
+      - run: echo "[please test action] == ${{ contains(github.event.pull_request.body, '[please test action]') }}"
+
   android-emulator-runner-simply:
     runs-on: macOS-latest
-
+    needs: validation
+    if: "contains(github.event.pull_request.body, '[please test action]')"
     steps:
     - uses: actions/checkout@v1
 
@@ -17,6 +23,8 @@ jobs:
 
   android-emulator-runner-with-strategy:
     runs-on: macOS-latest
+    needs: validation
+    if: "contains(github.event.pull_request.body, '[please test action]')"
     strategy:
       matrix:
         api-level: [23, 29]
@@ -36,7 +44,8 @@ jobs:
 
   hello-world:
     runs-on: macOS-latest
-
+    needs: validation
+    if: "contains(github.event.pull_request.body, '[please test action]')"
     steps:
     - uses: actions/checkout@v1
 
