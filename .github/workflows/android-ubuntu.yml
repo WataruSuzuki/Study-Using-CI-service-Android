@@ -13,5 +13,6 @@ jobs:
       with:
         docker-android-tag: api-29-ndk-v1.1.0
         exec: |
+          ./emu_docker.sh
           cd ui/espresso/BasicSample
           ./gradlew app:connectedDebugAndroidTes
