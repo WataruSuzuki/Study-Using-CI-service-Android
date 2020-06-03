@@ -13,28 +13,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-
-    - name: Install sdkmanager
-      run: |
-        curl -L -O https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip
-        sudo unzip commandlinetools-linux-6200805_latest.zip -d $ANDROID_HOME
-        export PATH=$PATH:{$ANDROID_HOME}tools/bin
-        sudo $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-27;google_apis;x86" --sdk_root=${ANDROID_HOME}
-        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --sdk_root=${ANDROID_HOME}
-
-    - name: Install android emulator
-      run: |
-        echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n api_level_27_google_apis -k 'system-images;android-27;google_apis;x86' -f
-
-    - name: Start android emulator
-      run: |
-        echo "Starting emulator"
-        echo $ANDROID_HOME/emulator/emulator -list-avds
-        echo "y" | nohup $ANDROID_HOME/emulator/emulator -avd api_level_27_google_apis -no-snapshot > /dev/null 2>&1 &
-        echo "y" | $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-        echo "Emulator started"
-        $ANDROID_HOME/platform-tools/adb devices
-    #
-    # - name: Run All Test
-    #   run: |
-    #     ./test_all.sh
+    - name: Docker Android Action
+      uses: faberNovel/docker-android@v1.1.1
+      with:
+        docker-android-tag: api-29-ndk-v1.1.0
+        exec: |
+          ./test_all.sh
